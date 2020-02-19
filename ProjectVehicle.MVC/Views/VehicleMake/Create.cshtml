@@ -1,10 +1,10 @@
-﻿@model ProjectVehicle.Data.Models.VehicleMake
+﻿@model ProjectVehicle.MVC.Models.VehicleMakeViewModel
 
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>Add manufacturer</h2>
 
 <link href="~/Content/Site.css" rel="stylesheet" />
 <script src="~/Scripts/jquery-3.3.1.min.js"></script>
@@ -17,7 +17,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>VehicleMake</h4>
+        
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">

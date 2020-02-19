@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using ProjectVehicle.MVC.Models;
+using System.Threading.Tasks;
 
 namespace ProjectVehicle.MVC.Controllers
 {
@@ -24,7 +25,13 @@ namespace ProjectVehicle.MVC.Controllers
             this.db = db;
             this.mapper = mapper;
         }
-        
+
+        public JsonResult IsNameAvailable(string ManufacturerName)
+        {
+            var result = db.ValidateName(ManufacturerName);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         // GET: VehicleMake
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
@@ -55,15 +62,15 @@ namespace ProjectVehicle.MVC.Controllers
         }
 
 
-        // GET: VehicleMake/Details/5 Sync method
-        public ActionResult Details(int? id)
+        // GET: VehicleMake/Details/5 
+        public async Task<ActionResult> Details(int? id)
         {            
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            VehicleMake vehicleMake = db.Find(id);
+            VehicleMake vehicleMake = await db.FindAsync(id);
             if (vehicleMake == null)
             {
                 return HttpNotFound();
@@ -72,32 +79,30 @@ namespace ProjectVehicle.MVC.Controllers
             return View(vehicleMakeVM);
         }
 
-        // GET: VehicleMake/Create 
-        //Just getting the form that will allow user to create a VehicleMake
+        // GET: VehicleMake/Create         
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: VehicleMake/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(VehicleMakeViewModel vehicleMakeVM)
+        public async Task<ActionResult> Create(VehicleMakeViewModel vehicleMakeVM)
         {           
             if (String.IsNullOrEmpty(vehicleMakeVM.ManufacturerName))
             {
                 ModelState.AddModelError(nameof(vehicleMakeVM.ManufacturerName), "The name is required");
             }
-
+            if (String.IsNullOrEmpty(vehicleMakeVM.MadeIn))
+            {
+                ModelState.AddModelError(nameof(vehicleMakeVM.MadeIn), "The place of production is required");
+            }
 
             if (ModelState.IsValid)
             {
                 var vehicleMake = mapper.Map<VehicleMakeViewModel, VehicleMake>(vehicleMakeVM);
-                db.InsertOrUpdate(vehicleMake);
-                db.Save();
+                await db.InsertOrUpdateAsync(vehicleMake);               
                 return RedirectToAction("Index");
             }
             return View();
@@ -105,14 +110,14 @@ namespace ProjectVehicle.MVC.Controllers
         }
 
         // GET: VehicleMake/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null) //VehicleMake/Edit/
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            VehicleMake vehicleMake = db.Find(id);
+            VehicleMake vehicleMake =await db.FindAsync(id);
             if (vehicleMake == null) //VehicleMake/Edit/0
             {
                 return HttpNotFound();
@@ -126,31 +131,35 @@ namespace ProjectVehicle.MVC.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(VehicleMakeViewModel vehicleMakeVM)
+        public async Task<ActionResult> Edit(VehicleMakeViewModel vehicleMakeVM)
         {
             if (String.IsNullOrEmpty(vehicleMakeVM.ManufacturerName))
             {
                 ModelState.AddModelError(nameof(vehicleMakeVM.ManufacturerName), "The name is required");
             }
+            if (String.IsNullOrEmpty(vehicleMakeVM.MadeIn))
+            {
+                ModelState.AddModelError(nameof(vehicleMakeVM.MadeIn), "The place of production is required");
+            }
 
             if (ModelState.IsValid)
             {
                 var vehicleMake = mapper.Map<VehicleMakeViewModel, VehicleMake>(vehicleMakeVM);
-                db.InsertOrUpdate(vehicleMake);                   
-                db.Save();                                     
+                await db.InsertOrUpdateAsync(vehicleMake);            
+                                                  
                 return RedirectToAction("Index");
             }
-            return View();// if there is error we want to stay on same view to see what are model validations errors
+            return View();
         }
 
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null) //VehicleMake/Edit/
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            VehicleMake vehicleMake = db.Find(id);
+            VehicleMake vehicleMake =await db.FindAsync(id);
             if (vehicleMake == null) //VehicleMake/Edit/0
             {
                 return HttpNotFound();
@@ -162,10 +171,9 @@ namespace ProjectVehicle.MVC.Controllers
         // POST: VehicleMake/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            db.Delete(id);
-            db.Save();
+            await db.DeleteAsync(id);           
             return RedirectToAction("Index");
         }
 

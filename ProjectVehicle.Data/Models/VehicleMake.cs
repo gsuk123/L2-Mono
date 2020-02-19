@@ -11,7 +11,7 @@ namespace ProjectVehicle.Data.Models
     {
         public int ID { get; set; }
         [Required]
-        [MaxLength(255)]
+        [MaxLength(255)]        
         public string ManufacturerName { get; set; }
         public string MadeIn { get; set; }
         public virtual ICollection<VehicleModel> VehicleModels { get; set; }

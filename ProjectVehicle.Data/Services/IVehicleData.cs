@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace ProjectVehicle.Data.Services
 {
@@ -12,18 +13,19 @@ namespace ProjectVehicle.Data.Services
     {
         IPagedList<VehicleMake> All(string sortOrder, string searchString, int? page);
 
+        bool ValidateName(string ManufacturerName);
+
         List<VehicleModel> AllModels(int? makeId = null);
 
+        List<VehicleMake> SelectAll();
 
-        VehicleMake Find(int? id);
-        VehicleModel FindModel(int? id);
+        Task<VehicleMake> FindAsync(int? id);
+        Task<VehicleModel> FindModelAsync(int? id);
 
-        void InsertOrUpdate(VehicleMake vehicleMake);
-        void InsertOrUpdateModel(VehicleModel vehicleModel);
+        Task InsertOrUpdateAsync(VehicleMake vehicleMake);
+        Task InsertOrUpdateModelAsync(VehicleModel vehicleModel);
 
-        void Save();
-
-        void Delete(int id);
-        void DeleteModel(int id);
+        Task DeleteAsync(int id);
+        Task DeleteModelAsync(int id);
     }
 }

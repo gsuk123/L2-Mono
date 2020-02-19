@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProjectVehicle.Data.Models.VehicleModel>
+﻿@model IEnumerable<ProjectVehicle.MVC.Models.VehicleModelViewModel>
 
 @{
     ViewBag.Title = "Models";
@@ -12,20 +12,16 @@
 <table class="table">
     <tr>
         <th>
-            @*@Html.DisplayNameFor(model => model.VehicleMake.ManufacturerName)*@
             Manufacturer name
+        <th>
+            @Html.DisplayNameFor(model => model.ModelName)            
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.ModelName)*@
-            Model name
+            @Html.DisplayNameFor(model => model.ModelYear)
+            
         </th>
         <th>
-            @*@Html.DisplayNameFor(model => model.ModelYear)*@
-            Model year
-        </th>
-        <th>
-            @*@Html.DisplayNameFor(model => model.Colour)*@
-            Model colour
+            @Html.DisplayNameFor(model => model.Colour)            
         </th>
         <th>
             Actions

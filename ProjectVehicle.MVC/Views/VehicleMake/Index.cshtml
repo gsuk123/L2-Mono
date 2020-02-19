@@ -22,20 +22,15 @@
 
 <table class="table">
     <tr>
-        @*<th>
-                @Html.DisplayNameFor(model => model.ManufacturerName)
-                Manufacturer name
-            </th>*@
+
         <th>
             @Html.ActionLink("Manufacturer name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
-        @*<th>
-                @Html.DisplayNameFor(model => model.MadeIn)
-                Made in
-            </th>*@
+
         <th>
             @Html.ActionLink("Made in", "Index", new { sortOrder = ViewBag.MadeInSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
+
         <th>
             Actions
         </th>

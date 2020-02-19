@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Web.Mvc;
 
 namespace ProjectVehicle.Data.Services
 {
@@ -16,6 +17,12 @@ namespace ProjectVehicle.Data.Services
         public SqlVehicleData(VehicleContext db)
         {
             this.db = db;
+        }
+
+        public bool ValidateName(string ManufacturerName)
+        {            
+            var result = !db.VehiclesMakes.Any(name => name.ManufacturerName == ManufacturerName);
+            return result;
         }
 
         public IPagedList<VehicleMake> All(string sortOrder, string searchString, int? page)
@@ -40,7 +47,7 @@ namespace ProjectVehicle.Data.Services
                     break;
             }
             int pageSize = 3;
-            int pageNumber = (page ?? 1); //if page is null then value is 1
+            int pageNumber = (page ?? 1); 
 
 
             return vehicles.ToPagedList(pageNumber, pageSize);
@@ -59,57 +66,73 @@ namespace ProjectVehicle.Data.Services
             return vehicleModels.ToList();
         }
 
-        public VehicleMake Find(int? id)
+        public Task<VehicleMake> FindAsync(int? id)
         {
             VehicleMake vehicleMake = new VehicleMake();
-            vehicleMake = db.VehiclesMakes.Where(v => v.ID == id).FirstOrDefault();
-            return vehicleMake;
-        }
-        public VehicleModel FindModel(int? id)
-        {
-            VehicleModel vehicleModel = new VehicleModel();
-            vehicleModel = db.VehiclesModels.Where(m => m.VehicleModelID == id).FirstOrDefault();
-            return vehicleModel;
+            //vehicleMake = db.VehiclesMakes.Where(v => v.ID == id).FirstOrDefault();
+            return db.VehiclesMakes.FindAsync(id);
         }
 
-        public void InsertOrUpdate(VehicleMake vehicleMake)
+        public List<VehicleMake> SelectAll()
+        {
+            var vehicleMake = db.VehiclesMakes;
+            return vehicleMake.ToList();
+        }
+
+        public Task<VehicleModel> FindModelAsync(int? id)
+        {
+            VehicleModel vehicleModel = new VehicleModel();
+            //vehicleModel = db.VehiclesModels.Where(m => m.VehicleModelID == id).FirstOrDefault();
+            //return vehicleModel;
+            return db.VehiclesModels.FindAsync(id);
+        }
+
+        public Task InsertOrUpdateAsync(VehicleMake vehicleMake)
         {
             if(vehicleMake.ID == default)
             {
                 db.VehiclesMakes.Add(vehicleMake);
+                return db.SaveChangesAsync();
             }
             else
             {
                 db.Entry(vehicleMake).State = System.Data.Entity.EntityState.Modified;
+                return db.SaveChangesAsync();
             }
         }
 
-        public void InsertOrUpdateModel(VehicleModel vehicleModel)
+        public Task InsertOrUpdateModelAsync(VehicleModel vehicleModel)
         {
             if(vehicleModel.VehicleModelID == default)
             {
                 db.VehiclesModels.Add(vehicleModel);
+                return db.SaveChangesAsync();
             }
             else
             {
                 db.Entry(vehicleModel).State = System.Data.Entity.EntityState.Modified;
+                return db.SaveChangesAsync();
             }
         }
 
-        public void Save()
-        {
-            db.SaveChanges();
-        }
 
-        public void Delete(int id)
+
+        //public void Delete(int id)
+        //{
+        //    var vehicleMake = db.VehiclesMakes.Find(id);
+        //    db.VehiclesMakes.Remove(vehicleMake);
+        //}
+        public Task DeleteAsync(int id)
         {
             var vehicleMake = db.VehiclesMakes.Find(id);
             db.VehiclesMakes.Remove(vehicleMake);
+            return db.SaveChangesAsync();
         }
-        public void DeleteModel(int id)
+        public Task DeleteModelAsync(int id)
         {
             var vehicleModel = db.VehiclesModels.Find(id);
             db.VehiclesModels.Remove(vehicleModel);
+            return db.SaveChangesAsync();
         }
         public void Dispose()
         {

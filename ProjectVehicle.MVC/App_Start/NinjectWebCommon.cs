@@ -48,9 +48,7 @@ namespace ProjectVehicle.MVC
             try
             {
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
-                kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
-
-                
+                kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();                
 
                 RegisterServices(kernel);
                 return kernel;
@@ -71,13 +69,13 @@ namespace ProjectVehicle.MVC
             kernel.Bind<IVehicleData>().To<SqlVehicleData>();
             kernel.Bind<IMapper>().ToMethod((context) =>
             {
-                //Create a map
+                
                 var config = new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<VehicleMake, VehicleMakeViewModel>().ReverseMap();
                     cfg.CreateMap<VehicleModel, VehicleModelViewModel>().ReverseMap();
                 });
-                //Use the created map
+                
                 IMapper mapper = config.CreateMapper();
                 return mapper;
             });

@@ -1,4 +1,4 @@
-﻿@model ProjectVehicle.Data.Models.VehicleModel
+﻿@model ProjectVehicle.MVC.Models.VehicleModelViewModel
 
 @{
     ViewBag.Title = "Edit";
@@ -11,7 +11,7 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>VehicleModel</h4>
+        <h4>@Html.DisplayFor(model => model.VehicleMake.ManufacturerName)</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.VehicleModelID)
@@ -41,9 +41,9 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.VehicleMakeID, htmlAttributes: new { @class = "control-label col-md-2" })
+            @*@Html.LabelFor(model => model.VehicleMakeID, htmlAttributes: new { @class = "control-label col-md-2" })*@
             <div class="col-md-10">
-                @Html.EditorFor(model => model.VehicleMakeID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.HiddenFor(model => model.VehicleMakeID, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.VehicleMakeID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -57,5 +57,6 @@
 }
 
 <div>
+    @*<a href="javascript:history.back()">Back to List</a>*@
     @Html.ActionLink("Back to List", "Index")
 </div>
