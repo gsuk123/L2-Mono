@@ -14,8 +14,8 @@ namespace ProjectVehicle.Data.Services
         IPagedList<VehicleMake> All(string sortOrder, string searchString, int? page);
 
         bool ValidateName(string ManufacturerName);
-
-        List<VehicleModel> AllModels(int? makeId = null);
+        
+        IPagedList<VehicleModel> AllModels(string sortOrder, string searchString, int? page, int? makeId = null);
 
         List<VehicleMake> SelectAll();
 

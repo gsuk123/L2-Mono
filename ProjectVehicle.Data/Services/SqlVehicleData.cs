@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Web.Mvc;
 
+
 namespace ProjectVehicle.Data.Services
 {
     public class SqlVehicleData : IVehicleData
@@ -53,23 +54,39 @@ namespace ProjectVehicle.Data.Services
             return vehicles.ToPagedList(pageNumber, pageSize);
         }
 
-        public List<VehicleModel> AllModels(int? makeId = null)
+        public IPagedList<VehicleModel> AllModels(string sortOrder, string searchString, int? page, int? makeId = null)
         {
             var vehicleModels = db.VehiclesModels.Include(v => v.VehicleMake);
-
 
             if (makeId.HasValue)
             {
                 vehicleModels = vehicleModels.Where(m => m.VehicleMakeID == makeId);
-
             }
-            return vehicleModels.ToList();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                vehicleModels = vehicleModels.Where(v => v.ModelName.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "model_desc":
+                    vehicleModels = vehicleModels.OrderByDescending(v => v.ModelName);
+                    break;
+                default:
+                    vehicleModels = vehicleModels.OrderBy(v => v.ModelName);
+                    break;
+            }
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+
+            return vehicleModels.ToPagedList(pageNumber, pageSize);
+
         }
+
+
 
         public Task<VehicleMake> FindAsync(int? id)
         {
-            VehicleMake vehicleMake = new VehicleMake();
-            //vehicleMake = db.VehiclesMakes.Where(v => v.ID == id).FirstOrDefault();
+            VehicleMake vehicleMake = new VehicleMake();            
             return db.VehiclesMakes.FindAsync(id);
         }
 
@@ -82,8 +99,6 @@ namespace ProjectVehicle.Data.Services
         public Task<VehicleModel> FindModelAsync(int? id)
         {
             VehicleModel vehicleModel = new VehicleModel();
-            //vehicleModel = db.VehiclesModels.Where(m => m.VehicleModelID == id).FirstOrDefault();
-            //return vehicleModel;
             return db.VehiclesModels.FindAsync(id);
         }
 
@@ -117,11 +132,6 @@ namespace ProjectVehicle.Data.Services
 
 
 
-        //public void Delete(int id)
-        //{
-        //    var vehicleMake = db.VehiclesMakes.Find(id);
-        //    db.VehiclesMakes.Remove(vehicleMake);
-        //}
         public Task DeleteAsync(int id)
         {
             var vehicleMake = db.VehiclesMakes.Find(id);

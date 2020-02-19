@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PagedList;
 using ProjectVehicle.Data.Models;
 using ProjectVehicle.Data.Services;
 using ProjectVehicle.MVC.Models;
@@ -26,13 +27,25 @@ namespace ProjectVehicle.MVC.Controllers
             this.mapper = mapper;
         }
 
-
-
         // GET: VehicleModel
-        public ActionResult Index(int? makeId = null)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? makeId = null)
         {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "model_desc" : "";
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
-            var vehicleModels = db.AllModels(makeId);
+            ViewBag.CurrentFilter = searchString;
+
+
+            //var vehicleModels = db.AllModels(makeId);
+            var vehicleModels = db.AllModels(sortOrder, searchString, page, makeId);
             var vehicleViewModelList = new List<VehicleModelViewModel>();
             foreach(var v in vehicleModels)
             {
@@ -40,8 +53,9 @@ namespace ProjectVehicle.MVC.Controllers
                 vehicleViewModelList.Add(vehicleModelVM);
             }
             
-            
-            return View(vehicleViewModelList.ToList());
+            var newPagedList = new StaticPagedList<VehicleModelViewModel>(vehicleViewModelList, vehicleModels.PageNumber, vehicleModels.PageSize, vehicleModels.TotalItemCount);
+            return View(newPagedList);
+            //return View(vehicleViewModelList.ToList());
 
         }
 
@@ -52,7 +66,7 @@ namespace ProjectVehicle.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            VehicleModel vehicleModel =await db.FindModelAsync(id);
+            VehicleModel vehicleModel = await db.FindModelAsync(id);
             if (vehicleModel == null)
             {
                 return HttpNotFound();
@@ -63,8 +77,7 @@ namespace ProjectVehicle.MVC.Controllers
 
         // GET: VehicleModel/Create 
         public ActionResult Create()
-        {
-            
+        {            
             ViewBag.VehicleMakeID = new SelectList(db.SelectAll(), "ID", "ManufacturerName");
             return View();            
         }
@@ -78,11 +91,8 @@ namespace ProjectVehicle.MVC.Controllers
             {
                 var vehicleModel = mapper.Map<VehicleModelViewModel, VehicleModel>(vehicleModelVM);
                 await db.InsertOrUpdateModelAsync(vehicleModel);
-                //db.Save();
                 return RedirectToAction("Index");
-            }
-
-            //ViewBag.VehicleMakeID = new SelectList(db.VehicleMakes, "ID", "ManufacturerName", vehicleModel.VehicleMakeID);
+            }            
             
             return View();
         }
@@ -99,14 +109,11 @@ namespace ProjectVehicle.MVC.Controllers
             {
                 return HttpNotFound();
             }
-            VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModel, VehicleModelViewModel>(vehicleModel);
-            //ViewBag.VehicleMakeID = new SelectList(db.VehicleMakes, "ID", "ManufacturerName", vehicleModel.VehicleMakeID);
+            VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModel, VehicleModelViewModel>(vehicleModel);            
             return View(vehicleModelVM);
         }
 
         // POST: VehicleModel/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(VehicleModelViewModel vehicleModelVM)
@@ -114,11 +121,9 @@ namespace ProjectVehicle.MVC.Controllers
             if (ModelState.IsValid)
             {
                 var vehicleModel = mapper.Map<VehicleModelViewModel, VehicleModel>(vehicleModelVM);
-               await db.InsertOrUpdateModelAsync(vehicleModel);
-                //db.Save();
+                await db.InsertOrUpdateModelAsync(vehicleModel);
                 return RedirectToAction("Index");
-            }
-            //ViewBag.VehicleMakeID = new SelectList(db.VehicleMakes, "ID", "ManufacturerName", vehicleModel.VehicleMakeID);
+            }            
             return View();
         }
 
@@ -143,8 +148,7 @@ namespace ProjectVehicle.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-           await db.DeleteModelAsync(id);
-            //db.Save();
+            await db.DeleteModelAsync(id);            
             return RedirectToAction("Index");
         }
 
