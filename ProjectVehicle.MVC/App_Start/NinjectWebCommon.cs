@@ -10,11 +10,13 @@ namespace ProjectVehicle.MVC
     using AutoMapper;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
     using Ninject;
+    using Ninject.Extensions.Factory;
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
-    using ProjectVehicle.Data.Models;
-    using ProjectVehicle.Data.Services;
     using ProjectVehicle.MVC.Models;
+    using ProjectVehicle.Service.Common;
+    using ProjectVehicle.Service.Models;
+    using ProjectVehicle.Service.Services;
 
     public static class NinjectWebCommon
     {
@@ -66,13 +68,19 @@ namespace ProjectVehicle.MVC
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<IVehicleData>().To<SqlVehicleData>();
+                        
+            kernel.Bind<IHelperFactory>().ToFactory();
+            kernel.Bind<IVehicleSorting>().To<VehicleSorting>();
+            kernel.Bind<IVehiclePaging>().To<VehiclePaging>();
+            kernel.Bind<IVehicleFiltering>().To<VehicleFiltering>();
+            kernel.Bind<IVehicleMakeService>().To<VehicleMakeService>();
+            kernel.Bind<IVehicleModelService>().To<VehicleModelService>();
             kernel.Bind<IMapper>().ToMethod((context) =>
             {
                 
                 var config = new MapperConfiguration(cfg =>
                 {
-                    cfg.CreateMap<VehicleMake, VehicleMakeViewModel>().ReverseMap();
+                    cfg.CreateMap<IVehicleMake, VehicleMakeViewModel>().ReverseMap();
                     cfg.CreateMap<VehicleModel, VehicleModelViewModel>().ReverseMap();
                 });
                 

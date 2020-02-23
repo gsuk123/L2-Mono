@@ -14,16 +14,16 @@
 
 @using (Html.BeginForm("Index", "VehicleModel", FormMethod.Get))
 {
-    <p>
-        Find model: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
-        <input type="submit" value="Search" />
-    </p>
+<p>
+    <b>Find model: </b>@Html.TextBox("SearchString", ViewBag.CurrentFilter as string)    
+    <input type="submit" value="Search" />
+</p>
 }
 
 <table class="table">
     <tr>
         <th>
-            Manufacturer name
+            <text>Manufacturer name</text>
         </th>
         <th>
             @Html.ActionLink("Model name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
@@ -71,4 +71,8 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    new { page,         
+        makeId = Request.QueryString["makeId"],
+        sortOrder = ViewBag.CurrentSort, 
+        currentFilter = ViewBag.CurrentFilter 
+    }))

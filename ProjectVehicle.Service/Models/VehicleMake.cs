@@ -5,9 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectVehicle.Data.Models
+namespace ProjectVehicle.Service.Models
 {
-    public class VehicleMake
+    //Properties that we want to include in model binding
+    public interface IVehicleMake 
+    { 
+        int ID { get; set; }
+        string ManufacturerName { get; set; }
+        string MadeIn { get; set; }        
+
+    }
+
+    public class VehicleMake : IVehicleMake
     {
         public int ID { get; set; }
         [Required]

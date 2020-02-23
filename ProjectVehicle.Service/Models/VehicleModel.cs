@@ -4,9 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectVehicle.Data.Models
+namespace ProjectVehicle.Service.Models
 {
-    public class VehicleModel
+    public interface IVehicleModel 
+    {
+        int VehicleModelID { get; set; }
+        string ModelName { get; set; }
+        int ModelYear { get; set; }
+        string Colour { get; set; }
+        int VehicleMakeID { get; set; }
+    }
+
+    public class VehicleModel : IVehicleModel
     {
         public int VehicleModelID { get; set; }
         public string ModelName { get; set; }

@@ -13,8 +13,6 @@ namespace ProjectVehicle.MVC
     {
         protected void Application_Start()
         {
-            //Mapper.Initialize(cfg => cfg.AddProfile<AutomapperProfile>());
-            //InitializeAutoMapper.Initialize();
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

@@ -1,6 +1,4 @@
 ﻿using PagedList;
-using ProjectVehicle.Data.Models;
-using ProjectVehicle.Data.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,24 +9,30 @@ using System.Web.Mvc;
 using AutoMapper;
 using ProjectVehicle.MVC.Models;
 using System.Threading.Tasks;
+using ProjectVehicle.Service.Services;
+using ProjectVehicle.Service.Models;
+using ProjectVehicle.Service.Common;
 
 namespace ProjectVehicle.MVC.Controllers
 {
     public class VehicleMakeController : Controller
     {
-        private readonly IVehicleData db;
+        private readonly IVehicleMakeService vehicleService;
         private readonly IMapper mapper;
+        private readonly IHelperFactory helperFactory;
         public VehicleMakeController(
-            IVehicleData db,
-            IMapper mapper)
+            IVehicleMakeService vehicleService,
+            IMapper mapper,
+            IHelperFactory helperFactory)
         {
-            this.db = db;
+            this.vehicleService = vehicleService;
             this.mapper = mapper;
+            this.helperFactory = helperFactory;
         }
 
         public JsonResult IsNameAvailable(string ManufacturerName)
         {
-            var result = db.ValidateName(ManufacturerName);
+            var result = vehicleService.ValidateName(ManufacturerName);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -49,7 +53,16 @@ namespace ProjectVehicle.MVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var vehicles = db.All(sortOrder, searchString, page);
+            //var vehicles = vehicleService.GetAll(sortOrder, searchString, page);
+            var filter = helperFactory.CreateVehicleFiltering();
+            filter.Search = searchString;
+            var sort = helperFactory.CreateVehicleSorting();
+            sort.Sort = sortOrder;
+            var paging = helperFactory.CreateVehiclePaging();
+            paging.Page = page;
+
+
+            var vehicles = vehicleService.GetAll(sort, filter, paging);
             var vehiclesViewList = new List<VehicleMakeViewModel>();
             foreach (var v in vehicles)
             {
@@ -70,12 +83,12 @@ namespace ProjectVehicle.MVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            VehicleMake vehicleMake = await db.FindAsync(id);
+            var vehicleMake = await vehicleService.FindAsync(id);
             if (vehicleMake == null)
             {
                 return HttpNotFound();
             }
-            VehicleMakeViewModel vehicleMakeVM = mapper.Map<VehicleMake, VehicleMakeViewModel>(vehicleMake);
+            VehicleMakeViewModel vehicleMakeVM = mapper.Map<IVehicleMake, VehicleMakeViewModel>(vehicleMake);
             return View(vehicleMakeVM);
         }
 
@@ -102,7 +115,7 @@ namespace ProjectVehicle.MVC.Controllers
             if (ModelState.IsValid)
             {
                 var vehicleMake = mapper.Map<VehicleMakeViewModel, VehicleMake>(vehicleMakeVM);
-                await db.InsertOrUpdateAsync(vehicleMake);               
+                await vehicleService.InsertOrUpdateAsync(vehicleMake);               
                 return RedirectToAction("Index");
             }
             return View();
@@ -117,12 +130,12 @@ namespace ProjectVehicle.MVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            VehicleMake vehicleMake = await db.FindAsync(id);
+            IVehicleMake vehicleMake = await vehicleService.FindAsync(id);
             if (vehicleMake == null) 
             {
                 return HttpNotFound();
             }
-            VehicleMakeViewModel vehicleMakeVM = mapper.Map<VehicleMake, VehicleMakeViewModel>(vehicleMake);
+            VehicleMakeViewModel vehicleMakeVM = mapper.Map<IVehicleMake, VehicleMakeViewModel>(vehicleMake);
             return View(vehicleMakeVM);
         }
 
@@ -143,7 +156,7 @@ namespace ProjectVehicle.MVC.Controllers
             if (ModelState.IsValid)
             {
                 var vehicleMake = mapper.Map<VehicleMakeViewModel, VehicleMake>(vehicleMakeVM);
-                await db.InsertOrUpdateAsync(vehicleMake);            
+                await vehicleService.InsertOrUpdateAsync(vehicleMake);            
                                                   
                 return RedirectToAction("Index");
             }
@@ -157,12 +170,12 @@ namespace ProjectVehicle.MVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            VehicleMake vehicleMake = await db.FindAsync(id);
+            IVehicleMake vehicleMake = await vehicleService.FindAsync(id);
             if (vehicleMake == null) 
             {
                 return HttpNotFound();
             }
-            VehicleMakeViewModel vehicleMakeVM = mapper.Map<VehicleMake, VehicleMakeViewModel>(vehicleMake);
+            VehicleMakeViewModel vehicleMakeVM = mapper.Map<IVehicleMake, VehicleMakeViewModel>(vehicleMake);
             return View(vehicleMakeVM);
         }
 
@@ -171,7 +184,7 @@ namespace ProjectVehicle.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            await db.DeleteAsync(id);           
+            await vehicleService.DeleteAsync(id);           
             return RedirectToAction("Index");
         }
 
@@ -179,7 +192,7 @@ namespace ProjectVehicle.MVC.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                vehicleService.Dispose();
             }
             base.Dispose(disposing);
         }

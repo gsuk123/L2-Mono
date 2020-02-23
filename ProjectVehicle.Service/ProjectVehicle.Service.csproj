@@ -8,8 +8,8 @@
     <ProjectGuid>{CBB0A63A-A103-426A-BD04-C9749BD58EBA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProjectVehicle.Data</RootNamespace>
-    <AssemblyName>ProjectVehicle.Data</AssemblyName>
+    <RootNamespace>ProjectVehicle.Service</RootNamespace>
+    <AssemblyName>ProjectVehicle.Service</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -78,12 +78,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\IHelperFactory.cs" />
+    <Compile Include="Common\IVehicleFiltering.cs" />
+    <Compile Include="Common\IVehiclePaging.cs" />
+    <Compile Include="Common\IVehicleSorting.cs" />
+    <Compile Include="Common\VehicleFiltering.cs" />
+    <Compile Include="Common\VehiclePaging.cs" />
+    <Compile Include="Common\VehicleSorting.cs" />
     <Compile Include="Models\VehicleMake.cs" />
     <Compile Include="Models\VehicleModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\IVehicleData.cs" />
-    <Compile Include="Services\SqlVehicleData.cs" />
+    <Compile Include="Services\IVehicleMakeService.cs" />
+    <Compile Include="Services\IVehicleModelService.cs" />
     <Compile Include="Services\VehicleContext.cs" />
+    <Compile Include="Services\VehicleMakeService.cs" />
+    <Compile Include="Services\VehicleModelService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

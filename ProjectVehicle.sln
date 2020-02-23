@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVehicle.MVC", "ProjectVehicle.MVC\ProjectVehicle.MVC.csproj", "{3D15B510-C3E5-4E9D-818C-BE7E77A0BF71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVehicle.Data", "ProjectVehicle.Data\ProjectVehicle.Data.csproj", "{CBB0A63A-A103-426A-BD04-C9749BD58EBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectVehicle.Service", "ProjectVehicle.Service\ProjectVehicle.Service.csproj", "{CBB0A63A-A103-426A-BD04-C9749BD58EBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
