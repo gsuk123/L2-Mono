@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using ProjectVehicle.Service.Common;
 
 namespace ProjectVehicle.Service.Services
 {
@@ -17,43 +18,57 @@ namespace ProjectVehicle.Service.Services
             this.dbConnection = dbConnection;
         }
 
-        public IPagedList<VehicleModel> AllModels(string sortOrder, string searchString, int? page, int? makeId = null)
+        public Task<IPagedList<VehicleModel>> GetAllModelsAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page, int? makeId = null)
         {
             var vehicleModels = dbConnection.VehiclesModels.Include(v => v.VehicleMake);
+
+            var searchVehicle = filter.Filter;
+            var sortVehicle = sort.Sort;
 
             if (makeId.HasValue)
             {
                 vehicleModels = vehicleModels.Where(m => m.VehicleMakeID == makeId);
             }
-            if (!String.IsNullOrEmpty(searchString))
+            if (!String.IsNullOrEmpty(searchVehicle))
             {
-                vehicleModels = vehicleModels.Where(v => v.ModelName.Contains(searchString));
+                vehicleModels = vehicleModels.Where(v => v.ModelName.Contains(searchVehicle));
             }
-            switch (sortOrder)
+            switch (sortVehicle)
             {
                 case "model_desc":
                     vehicleModels = vehicleModels.OrderByDescending(v => v.ModelName);
+                    break;
+                case "Year":
+                    vehicleModels = vehicleModels.OrderBy(v => v.ModelYear);
+                    break;
+                case "year_desc":
+                    vehicleModels = vehicleModels.OrderByDescending(v => v.ModelYear);
                     break;
                 default:
                     vehicleModels = vehicleModels.OrderBy(v => v.ModelName);
                     break;
             }
-            int pageSize = 3;
-            int pageNumber = (page ?? 1);
+            var pagedList = vehicleModels.ToPagedList(page.Page ?? 1, 3);
 
-            return vehicleModels.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult(pagedList);
 
         }
         public IEnumerable<IVehicleMake> SelectAll()
         {
-            var vehicleMake = dbConnection.VehiclesMakes;
+            var vehicleMake =  dbConnection.VehiclesMakes;
             return vehicleMake.ToList();
         }
 
-        public Task<VehicleModel> FindModelAsync(int? id)
+        //public Task<VehicleModel> FindModelAsync(int? id)
+        //{
+        //    VehicleModel vehicleModel = new VehicleModel();
+        //    return dbConnection.VehiclesModels.FindAsync(id);
+        //}
+        public async Task<IVehicleModel> FindModelAsync(int? id)
         {
-            VehicleModel vehicleModel = new VehicleModel();
-            return dbConnection.VehiclesModels.FindAsync(id);
+            var vehicleModel = dbConnection.VehiclesModels;
+            var make = await vehicleModel.FindAsync(id);
+            return make;
         }
 
         public Task InsertOrUpdateModelAsync(VehicleModel vehicleModel)

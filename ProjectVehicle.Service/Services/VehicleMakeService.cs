@@ -17,26 +17,27 @@ namespace ProjectVehicle.Service.Services
             this.dbConnection = dbConnection;
         }
 
-        public bool ValidateName(string ManufacturerName)
+        public Task<bool> ValidateVehicleNameAsync(string manufacturerName)
         {
-            var result = !dbConnection.VehiclesMakes.Any(name => name.ManufacturerName == ManufacturerName);
-            return result;
+            var result = !dbConnection.VehiclesMakes.Any(name => name.ManufacturerName == manufacturerName);
+            return Task.FromResult(result);
+            
         }
 
-        //public IPagedList<VehicleMake> GetAll(string sortOrder, string searchString, int? page)
-        public IPagedList<VehicleMake> GetAll(IVehicleSorting sort, IVehicleFiltering search, IVehiclePaging page)
+        
+        public Task<IPagedList<VehicleMake>> GetAllAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page)
         {
             var vehicles = dbConnection.VehiclesMakes.Select(v => v);
 
-            var searchString = search.Search;
-            var sortOrder = sort.Sort;
+            var searchVehicle = filter.Filter;
+            var sortVehicle = sort.Sort;
             
-            if (!String.IsNullOrEmpty(searchString))
+            if (!String.IsNullOrEmpty(searchVehicle))
             {
-                vehicles = vehicles.Where(v => v.ManufacturerName.Contains(searchString)
-                                       || v.MadeIn.Contains(searchString));
+                vehicles = vehicles.Where(v => v.ManufacturerName.Contains(searchVehicle)
+                                       || v.MadeIn.Contains(searchVehicle));
             }
-            switch (sortOrder)
+            switch (sortVehicle)
             {
                 case "name_desc":
                     vehicles = vehicles.OrderByDescending(v => v.ManufacturerName);
@@ -48,32 +49,20 @@ namespace ProjectVehicle.Service.Services
                     vehicles = vehicles.OrderBy(v => v.ManufacturerName);
                     break;
             }
-            int pageSize = 3;
-            int pageNumber = (page.Page ?? 1);
 
+            var pagedList = vehicles.ToPagedList(page.Page ?? 1, 3);
 
-            return vehicles.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult(pagedList);
             
         }
 
-        //public Task<VehicleMake> FindAsync(int? id)
-        //{
-        //    VehicleMake vehicleMake = new VehicleMake();
-        //    return dbConnection.VehiclesMakes.FindAsync(id);
-        //}
 
         public async Task<IVehicleMake> FindAsync(int? id)
         {            
-            var vehicleMake = dbConnection.VehiclesMakes;
-            var make = await vehicleMake.FindAsync(id);
-            return make;
+            var vehicleMakes = dbConnection.VehiclesMakes;
+            var vehicleMake = await vehicleMakes.FindAsync(id);
+            return vehicleMake;
         }
-
-        //public IEnumerable<IVehicleMake> SelectAll()
-        //{
-        //    var vehicleMake = dbConnection.VehiclesMakes;
-        //    return vehicleMake.ToList();
-        //}
 
         public Task InsertOrUpdateAsync(VehicleMake vehicleMake)
         {

@@ -11,7 +11,7 @@ namespace ProjectVehicle.Service.Common
 
     public class VehicleFiltering : IVehicleFiltering
     {        
-        public string Search { get; set; }
+        public string Filter { get; set; }
     }
 }
 

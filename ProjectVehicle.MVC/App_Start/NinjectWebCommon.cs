@@ -80,8 +80,10 @@ namespace ProjectVehicle.MVC
                 
                 var config = new MapperConfiguration(cfg =>
                 {
-                    cfg.CreateMap<IVehicleMake, VehicleMakeViewModel>().ReverseMap();
+                    cfg.CreateMap<VehicleMake, VehicleMakeViewModel>().ReverseMap();
                     cfg.CreateMap<VehicleModel, VehicleModelViewModel>().ReverseMap();
+                    //cfg.CreateMap<IVehicleMake, VehicleMakeViewModel>().ReverseMap();
+                    //cfg.CreateMap<IVehicleModel, VehicleModelViewModel>().ReverseMap();
                 });
                 
                 IMapper mapper = config.CreateMapper();

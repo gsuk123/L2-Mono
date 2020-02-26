@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProjectVehicle.Service.Models
 {
-    //Properties that we want to include in model binding
+    
     public interface IVehicleMake 
     { 
         int ID { get; set; }
@@ -18,9 +18,7 @@ namespace ProjectVehicle.Service.Models
 
     public class VehicleMake : IVehicleMake
     {
-        public int ID { get; set; }
-        [Required]
-        [MaxLength(255)]        
+        public int ID { get; set; }      
         public string ManufacturerName { get; set; }
         public string MadeIn { get; set; }
         public virtual ICollection<VehicleModel> VehicleModels { get; set; }

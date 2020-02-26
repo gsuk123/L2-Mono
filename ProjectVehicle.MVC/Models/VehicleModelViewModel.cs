@@ -11,10 +11,14 @@ namespace ProjectVehicle.MVC.Models
     {
         public int VehicleModelID { get; set; }
         [Display(Name = "Model name")]
+        [Required]
         public string ModelName { get; set; }
         [Display(Name = "Model year")]
-        public int ModelYear { get; set; }        
+        [Required]
+        public int ModelYear { get; set; }
+        [Required]
         public string Colour { get; set; }
+        [Required]
         public int VehicleMakeID { get; set; }
         public virtual VehicleMake VehicleMake { get; set; }
     }

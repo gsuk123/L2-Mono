@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<ProjectVehicle.MVC.Models.VehicleMakeViewModel>
+﻿@model PagedList.IPagedList<ProjectVehicle.MVC.Models.IVehicleMakeViewModel>
 @using PagedList.Mvc;
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
@@ -15,7 +15,7 @@
 @using (Html.BeginForm("Index", "VehicleMake", FormMethod.Get))
 {
     <p>
-        Find: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        Find: @Html.TextBox("SearchVehicle", ViewBag.CurrentFilter as string)
         <input type="submit" value="Search" />
     </p>
 }
@@ -24,11 +24,11 @@
     <tr>
 
         <th>
-            @Html.ActionLink("Manufacturer name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Manufacturer name", "Index", new { sortVehicle = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
 
         <th>
-            @Html.ActionLink("Made in", "Index", new { sortOrder = ViewBag.MadeInSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Made in", "Index", new { sortVehicle = ViewBag.MadeInSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
 
         <th>
@@ -64,8 +64,8 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+@Html.PagedListPager(Model, pageVehicle => Url.Action("Index",
+    new { pageVehicle, sortVehicle = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
 
 
 

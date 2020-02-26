@@ -8,6 +8,6 @@ namespace ProjectVehicle.Service.Common
 {
     public interface IVehicleFiltering
     {
-        string Search { get; set; }
+        string Filter { get; set; }
     }
 }

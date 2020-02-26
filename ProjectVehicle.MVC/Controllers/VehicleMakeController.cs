@@ -30,47 +30,48 @@ namespace ProjectVehicle.MVC.Controllers
             this.helperFactory = helperFactory;
         }
 
-        public JsonResult IsNameAvailable(string ManufacturerName)
+        public async Task<JsonResult> IsNameAvailable(string manufacturerName)
         {
-            var result = vehicleService.ValidateName(ManufacturerName);
+            var result = await vehicleService.ValidateVehicleNameAsync(manufacturerName);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         // GET: VehicleMake
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public async Task<ActionResult> Index(string sortVehicle, string currentFilter, string searchVehicle, int? pageVehicle)
         {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.MadeInSortParm = String.IsNullOrEmpty(sortOrder) ? "madein_desc" : "";
-            if (searchString != null)
+            ViewBag.CurrentSort = sortVehicle;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortVehicle) ? "name_desc" : "";
+            ViewBag.MadeInSortParm = String.IsNullOrEmpty(sortVehicle) ? "madein_desc" : "";
+            if (searchVehicle != null)
             {
-                page = 1;
+                pageVehicle = 1;
             }
             else
             {
-                searchString = currentFilter;
+                searchVehicle = currentFilter;
             }
 
-            ViewBag.CurrentFilter = searchString;
+            ViewBag.CurrentFilter = searchVehicle;
 
-            //var vehicles = vehicleService.GetAll(sortOrder, searchString, page);
+            
             var filter = helperFactory.CreateVehicleFiltering();
-            filter.Search = searchString;
+            filter.Filter = searchVehicle;
             var sort = helperFactory.CreateVehicleSorting();
-            sort.Sort = sortOrder;
-            var paging = helperFactory.CreateVehiclePaging();
-            paging.Page = page;
+            sort.Sort = sortVehicle;
+            var page = helperFactory.CreateVehiclePaging();
+            page.Page = pageVehicle;
 
 
-            var vehicles = vehicleService.GetAll(sort, filter, paging);
+            
+            var vehicles = await vehicleService.GetAllAsync(sort, filter, page);
             var vehiclesViewList = new List<VehicleMakeViewModel>();
             foreach (var v in vehicles)
             {
                 VehicleMakeViewModel vehicleMakeVM = mapper.Map<VehicleMakeViewModel>(v);
                 vehiclesViewList.Add(vehicleMakeVM);
             }
-            var newPagedList = new StaticPagedList<VehicleMakeViewModel>(vehiclesViewList, vehicles.PageNumber, vehicles.PageSize, vehicles.TotalItemCount);
-            return View(newPagedList);
+            var vehiclePagedList = new StaticPagedList<VehicleMakeViewModel>(vehiclesViewList, vehicles.PageNumber, vehicles.PageSize, vehicles.TotalItemCount);
+            return View(vehiclePagedList);
 
         }
 
@@ -103,14 +104,7 @@ namespace ProjectVehicle.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(VehicleMakeViewModel vehicleMakeVM)
         {           
-            if (String.IsNullOrEmpty(vehicleMakeVM.ManufacturerName))
-            {
-                ModelState.AddModelError(nameof(vehicleMakeVM.ManufacturerName), "The name is required");
-            }
-            if (String.IsNullOrEmpty(vehicleMakeVM.MadeIn))
-            {
-                ModelState.AddModelError(nameof(vehicleMakeVM.MadeIn), "The place of production is required");
-            }
+
 
             if (ModelState.IsValid)
             {
@@ -144,14 +138,6 @@ namespace ProjectVehicle.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(VehicleMakeViewModel vehicleMakeVM)
         {
-            if (String.IsNullOrEmpty(vehicleMakeVM.ManufacturerName))
-            {
-                ModelState.AddModelError(nameof(vehicleMakeVM.ManufacturerName), "The name is required");
-            }
-            if (String.IsNullOrEmpty(vehicleMakeVM.MadeIn))
-            {
-                ModelState.AddModelError(nameof(vehicleMakeVM.MadeIn), "The place of production is required");
-            }
 
             if (ModelState.IsValid)
             {

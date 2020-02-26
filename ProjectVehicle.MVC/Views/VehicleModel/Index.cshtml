@@ -15,7 +15,7 @@
 @using (Html.BeginForm("Index", "VehicleModel", FormMethod.Get))
 {
 <p>
-    <b>Find model: </b>@Html.TextBox("SearchString", ViewBag.CurrentFilter as string)    
+    <b>Find model: </b>@Html.TextBox("SearchVehicle", ViewBag.CurrentFilter as string)    
     <input type="submit" value="Search" />
 </p>
 }
@@ -26,10 +26,10 @@
             <text>Manufacturer name</text>
         </th>
         <th>
-            @Html.ActionLink("Model name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Model name", "Index", new { sortVehicle = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
-        <th>
-            Model year
+        <th>            
+            @Html.ActionLink("Year", "Index", new { sortVehicle = ViewBag.YearSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
 
         <th>
@@ -70,9 +70,9 @@
 <br />
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, page => Url.Action("Index",
-    new { page,         
+@Html.PagedListPager(Model, pageVehicle => Url.Action("Index",
+    new { pageVehicle,         
         makeId = Request.QueryString["makeId"],
-        sortOrder = ViewBag.CurrentSort, 
+        sortVehicle = ViewBag.CurrentSort, 
         currentFilter = ViewBag.CurrentFilter 
     }))

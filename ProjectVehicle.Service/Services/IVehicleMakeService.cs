@@ -11,9 +11,8 @@ namespace ProjectVehicle.Service.Services
 {
     public interface IVehicleMakeService : IDisposable
     {
-        IPagedList<VehicleMake> GetAll(IVehicleSorting sort, IVehicleFiltering search, IVehiclePaging page);
-        //IPagedList<VehicleMake> GetAll(string sortOrder, string searchString, int? page);
-        bool ValidateName(string ManufacturerName);
+        Task<IPagedList<VehicleMake>> GetAllAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page);      
+        Task<bool> ValidateVehicleNameAsync(string manufacturerName);
         Task<IVehicleMake> FindAsync(int? id);
         Task InsertOrUpdateAsync(VehicleMake vehicleMake);
         Task DeleteAsync(int id);
