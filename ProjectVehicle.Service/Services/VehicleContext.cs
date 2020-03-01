@@ -1,4 +1,4 @@
-﻿using ProjectVehicle.Service.Models;
+﻿using ProjectVehicle.Service.DAL;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,8 +11,8 @@ namespace ProjectVehicle.Service.Services
 {
     public class VehicleContext : DbContext
     {
-        public DbSet<VehicleMake> VehiclesMakes { get; set; }
-        public DbSet<VehicleModel> VehiclesModels { get; set; }
+        public DbSet<VehicleMakeEntityModel> VehiclesMakes { get; set; }
+        public DbSet<VehicleModelEntityModel> VehiclesModels { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

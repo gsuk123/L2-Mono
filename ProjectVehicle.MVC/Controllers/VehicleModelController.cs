@@ -55,18 +55,16 @@ namespace ProjectVehicle.MVC.Controllers
             page.Page = pageVehicle;
 
 
-            var vehicleModels = await vehicleService.GetAllModelsAsync(sort, filter, page, makeId);
-            var vehicleViewModelList = new List<VehicleModelViewModel>();
+            var vehicleModels = await vehicleService.FindVehicleModelsAsync(sort, filter, page, makeId);
+            var vehicleList = new List<VehicleModelViewModel>();
             foreach (var v in vehicleModels)
             {
-                VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModelViewModel>(v);
-                vehicleViewModelList.Add(vehicleModelVM);
+                VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModelViewModel>(v);                
+                vehicleList.Add(vehicleModelVM);
             }
 
-            var vehiclePagedList = new StaticPagedList<VehicleModelViewModel>(vehicleViewModelList, vehicleModels.PageNumber, vehicleModels.PageSize, vehicleModels.TotalItemCount);
+            var vehiclePagedList = new StaticPagedList<VehicleModelViewModel>(vehicleList, vehicleModels.PageNumber, vehicleModels.PageSize, vehicleModels.TotalItemCount);
             return View(vehiclePagedList);
-
-
         }
 
         //GET: VehicleModel/Details/5
@@ -76,19 +74,19 @@ namespace ProjectVehicle.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var vehicleModel = await vehicleService.FindModelAsync(id);
+            var vehicleModel = await vehicleService.GetVehicleModelAsync(id);
             if (vehicleModel == null)
             {
                 return HttpNotFound();
             }
-            VehicleModelViewModel vehicleModelVM = mapper.Map<IVehicleModel, VehicleModelViewModel>(vehicleModel);
+            VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModelViewModel>(vehicleModel);
             return View(vehicleModelVM);
         }
 
         // GET: VehicleModel/Create 
-        public ActionResult Create()
+        public async Task<ActionResult>Create()
         {            
-            ViewBag.VehicleMakeID =  new SelectList(vehicleService.SelectAll(), "ID", "ManufacturerName");
+            ViewBag.VehicleMakeID =  new SelectList( await vehicleService.GetVehiclesMake(), "ID", "ManufacturerName");
             return View();            
         }
 
@@ -99,8 +97,8 @@ namespace ProjectVehicle.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var vehicleModel = mapper.Map<VehicleModelViewModel, VehicleModel>(vehicleModelVM);
-                await vehicleService.InsertOrUpdateModelAsync(vehicleModel);
+                var vehicleModel = mapper.Map<IVehicleModel>(vehicleModelVM);
+                await vehicleService.InsertOrUpdateVehicleModelAsync(vehicleModel);
                 return RedirectToAction("Index");
             }            
             
@@ -114,12 +112,12 @@ namespace ProjectVehicle.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var vehicleModel = await vehicleService.FindModelAsync(id);
+            var vehicleModel = await vehicleService.GetVehicleModelAsync(id);
             if (vehicleModel == null)
             {
                 return HttpNotFound();
             }
-            VehicleModelViewModel vehicleModelVM = mapper.Map<IVehicleModel, VehicleModelViewModel>(vehicleModel);            
+            VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModelViewModel>(vehicleModel);            
             return View(vehicleModelVM);
         }
 
@@ -130,8 +128,8 @@ namespace ProjectVehicle.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var vehicleModel = mapper.Map<VehicleModelViewModel, VehicleModel>(vehicleModelVM);
-                await vehicleService.InsertOrUpdateModelAsync(vehicleModel);
+                var vehicleModel = mapper.Map<IVehicleModel>(vehicleModelVM);
+                await vehicleService.InsertOrUpdateVehicleModelAsync(vehicleModel);
                 return RedirectToAction("Index");
             }            
             return View();
@@ -144,12 +142,12 @@ namespace ProjectVehicle.MVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var vehicleModel = await vehicleService.FindModelAsync(id);
+            var vehicleModel = await vehicleService.GetVehicleModelAsync(id);
             if (vehicleModel == null)
             {
                 return HttpNotFound();
             }
-            VehicleModelViewModel vehicleModelVM = mapper.Map<IVehicleModel, VehicleModelViewModel>(vehicleModel);
+            VehicleModelViewModel vehicleModelVM = mapper.Map<VehicleModelViewModel>(vehicleModel);
             return View(vehicleModelVM);
         }
 
@@ -158,7 +156,7 @@ namespace ProjectVehicle.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            await vehicleService.DeleteModelAsync(id);            
+            await vehicleService.DeleteVehicleModelAsync(id);            
             return RedirectToAction("Index");
         }
 

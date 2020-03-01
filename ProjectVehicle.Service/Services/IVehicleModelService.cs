@@ -11,10 +11,10 @@ namespace ProjectVehicle.Service.Services
 {
     public interface IVehicleModelService : IDisposable
     {
-        Task<IPagedList<VehicleModel>> GetAllModelsAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page, int? makeId = null);
-        Task<IVehicleModel> FindModelAsync(int? id);
-        Task InsertOrUpdateModelAsync(VehicleModel vehicleModel);
-        Task DeleteModelAsync(int id);
-        IEnumerable<IVehicleMake> SelectAll();
+        Task<IPagedList<IVehicleModel>> FindVehicleModelsAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page, int? makeId = null);
+        Task<IVehicleModel> GetVehicleModelAsync(int? id);
+        Task InsertOrUpdateVehicleModelAsync(IVehicleModel vehicleModel);
+        Task DeleteVehicleModelAsync(int id);
+        Task<IEnumerable<IVehicleMake>> GetVehiclesMake();
     }
 }

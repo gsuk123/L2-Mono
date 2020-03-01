@@ -15,6 +15,7 @@ namespace ProjectVehicle.MVC
     using Ninject.Web.Common.WebHost;
     using ProjectVehicle.MVC.Models;
     using ProjectVehicle.Service.Common;
+    using ProjectVehicle.Service.DAL;
     using ProjectVehicle.Service.Models;
     using ProjectVehicle.Service.Services;
 
@@ -69,7 +70,7 @@ namespace ProjectVehicle.MVC
         private static void RegisterServices(IKernel kernel)
         {
                         
-            kernel.Bind<IHelperFactory>().ToFactory();
+            kernel.Bind<IHelperFactory>().ToFactory();            
             kernel.Bind<IVehicleSorting>().To<VehicleSorting>();
             kernel.Bind<IVehiclePaging>().To<VehiclePaging>();
             kernel.Bind<IVehicleFiltering>().To<VehicleFiltering>();
@@ -80,10 +81,10 @@ namespace ProjectVehicle.MVC
                 
                 var config = new MapperConfiguration(cfg =>
                 {
-                    cfg.CreateMap<VehicleMake, VehicleMakeViewModel>().ReverseMap();
-                    cfg.CreateMap<VehicleModel, VehicleModelViewModel>().ReverseMap();
-                    //cfg.CreateMap<IVehicleMake, VehicleMakeViewModel>().ReverseMap();
-                    //cfg.CreateMap<IVehicleModel, VehicleModelViewModel>().ReverseMap();
+                    cfg.CreateMap<IVehicleMake, VehicleMakeViewModel>().ReverseMap();
+                    cfg.CreateMap<IVehicleModel, VehicleModelViewModel>().ReverseMap();
+                    cfg.CreateMap<VehicleMakeEntityModel, IVehicleMake>().ReverseMap();
+                    cfg.CreateMap<VehicleModelEntityModel, IVehicleModel>().ReverseMap();
                 });
                 
                 IMapper mapper = config.CreateMapper();

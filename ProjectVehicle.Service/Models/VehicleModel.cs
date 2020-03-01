@@ -13,6 +13,7 @@ namespace ProjectVehicle.Service.Models
         int ModelYear { get; set; }
         string Colour { get; set; }
         int VehicleMakeID { get; set; }
+        IVehicleMake VehicleMake { get; set; }
     }
 
     public class VehicleModel : IVehicleModel
@@ -22,7 +23,7 @@ namespace ProjectVehicle.Service.Models
         public int ModelYear { get; set; }
         public string Colour { get; set; }
         public int VehicleMakeID { get; set; }
-        public virtual VehicleMake VehicleMake { get; set; }
+        public virtual IVehicleMake VehicleMake { get; set; }
         
     }
 }

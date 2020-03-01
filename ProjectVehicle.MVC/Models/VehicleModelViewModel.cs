@@ -1,4 +1,5 @@
-﻿using ProjectVehicle.Service.Models;
+﻿using ProjectVehicle.Service.DAL;
+using ProjectVehicle.Service.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,7 @@ using System.Web;
 
 namespace ProjectVehicle.MVC.Models
 {
+
     public class VehicleModelViewModel
     {
         public int VehicleModelID { get; set; }
@@ -20,6 +22,6 @@ namespace ProjectVehicle.MVC.Models
         public string Colour { get; set; }
         [Required]
         public int VehicleMakeID { get; set; }
-        public virtual VehicleMake VehicleMake { get; set; }
+        public virtual VehicleMakeViewModel VehicleMake { get; set; }
     }
 }

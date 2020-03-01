@@ -7,14 +7,8 @@ using System.Web.Mvc;
 
 namespace ProjectVehicle.MVC.Models
 {
-    public interface IVehicleMakeViewModel
-    {
-        int ID { get; set; }
-        string ManufacturerName { get; set; }
-        string MadeIn { get; set; }
-    }
 
-    public class VehicleMakeViewModel : IVehicleMakeViewModel
+    public class VehicleMakeViewModel 
     {
         public int ID { get; set; }
         [Remote("IsNameAvailable", "VehicleMake", ErrorMessage = "Manufacturer name alredy in use.")]

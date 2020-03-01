@@ -1,5 +1,7 @@
-﻿using PagedList;
+﻿using AutoMapper;
+using PagedList;
 using ProjectVehicle.Service.Common;
+using ProjectVehicle.Service.DAL;
 using ProjectVehicle.Service.Models;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,11 @@ namespace ProjectVehicle.Service.Services
     public class VehicleMakeService : IVehicleMakeService
     {
         readonly VehicleContext dbConnection;
-        public VehicleMakeService(VehicleContext dbConnection)
+        readonly IMapper mapper;
+        public VehicleMakeService(VehicleContext dbConnection, IMapper mapper)
         {
             this.dbConnection = dbConnection;
+            this.mapper = mapper;
         }
 
         public Task<bool> ValidateVehicleNameAsync(string manufacturerName)
@@ -25,9 +29,9 @@ namespace ProjectVehicle.Service.Services
         }
 
         
-        public Task<IPagedList<VehicleMake>> GetAllAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page)
+        public Task<IPagedList<IVehicleMake>> FindVehicleMakeAsync(IVehicleSorting sort, IVehicleFiltering filter, IVehiclePaging page)
         {
-            var vehicles = dbConnection.VehiclesMakes.Select(v => v);
+            var vehicles = dbConnection.VehiclesMakes.Select(v => v);            
 
             var searchVehicle = filter.Filter;
             var sortVehicle = sort.Sort;
@@ -50,38 +54,42 @@ namespace ProjectVehicle.Service.Services
                     break;
             }
 
-            var pagedList = vehicles.ToPagedList(page.Page ?? 1, 3);
+            var mappedList = mapper.Map<List<VehicleMakeEntityModel>, List<IVehicleMake>>(vehicles.ToList());
+
+            var pagedList = mappedList.ToPagedList(page.Page ?? 1, 3);            
 
             return Task.FromResult(pagedList);
             
         }
 
 
-        public async Task<IVehicleMake> FindAsync(int? id)
+        public async Task<IVehicleMake> GetVehicleMakeAsync(int? id)
         {            
             var vehicleMakes = dbConnection.VehiclesMakes;
-            var vehicleMake = await vehicleMakes.FindAsync(id);
-            return vehicleMake;
+            var vehicleMake = await vehicleMakes.FindAsync(id);            
+            IVehicleMake vehicle = mapper.Map<IVehicleMake>(vehicleMake);            
+            return vehicle;
         }
 
-        public Task InsertOrUpdateAsync(VehicleMake vehicleMake)
+        public Task InsertOrUpdateVehicleMakeAsync(IVehicleMake vehicleMake)
         {
-            if (vehicleMake.ID == default)
+            VehicleMakeEntityModel vehicleMakeEM = mapper.Map<VehicleMakeEntityModel>(vehicleMake);
+            if (vehicleMakeEM.ID == default)
             {
-                dbConnection.VehiclesMakes.Add(vehicleMake);
+                dbConnection.VehiclesMakes.Add(vehicleMakeEM);
                 return dbConnection.SaveChangesAsync();
             }
             else
             {
-                dbConnection.Entry(vehicleMake).State = System.Data.Entity.EntityState.Modified;
+                dbConnection.Entry(vehicleMakeEM).State = System.Data.Entity.EntityState.Modified;
                 return dbConnection.SaveChangesAsync();
             }
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteVehicleMakeAsync(int id)
         {
-            var vehicleMake = dbConnection.VehiclesMakes.Find(id);
-            dbConnection.VehiclesMakes.Remove(vehicleMake);
+            var vehicleMakeEM = dbConnection.VehiclesMakes.Find(id);
+            dbConnection.VehiclesMakes.Remove(vehicleMakeEM);
             return dbConnection.SaveChangesAsync();
         }
 
