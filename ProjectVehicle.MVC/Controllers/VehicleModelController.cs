@@ -100,8 +100,9 @@ namespace ProjectVehicle.MVC.Controllers
                 var vehicleModel = mapper.Map<IVehicleModel>(vehicleModelVM);
                 await vehicleService.InsertOrUpdateVehicleModelAsync(vehicleModel);
                 return RedirectToAction("Index");
-            }            
-            
+            }
+
+            ViewBag.VehicleMakeID = new SelectList(await vehicleService.GetVehiclesMake(), "ID", "ManufacturerName");
             return View();
         }
 

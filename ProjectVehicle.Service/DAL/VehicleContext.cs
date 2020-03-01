@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectVehicle.Service.Services
+namespace ProjectVehicle.Service.DAL
 {
     public class VehicleContext : DbContext
     {

@@ -21,6 +21,6 @@ namespace ProjectVehicle.Service.Models
         public int ID { get; set; }      
         public string ManufacturerName { get; set; }
         public string MadeIn { get; set; }
-        public  IEnumerable<IVehicleModel> VehicleModels { get; set; }
+        public IEnumerable<IVehicleModel> VehicleModels { get; set; }
     }
 }

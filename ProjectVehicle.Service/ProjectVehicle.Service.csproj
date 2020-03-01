@@ -110,7 +110,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IVehicleMakeService.cs" />
     <Compile Include="Services\IVehicleModelService.cs" />
-    <Compile Include="Services\VehicleContext.cs" />
+    <Compile Include="DAL\VehicleContext.cs" />
     <Compile Include="Services\VehicleMakeService.cs" />
     <Compile Include="Services\VehicleModelService.cs" />
   </ItemGroup>
